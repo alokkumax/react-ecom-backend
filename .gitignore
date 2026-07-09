@@ -1,0 +1,5 @@
+# Do not upload node_modules folder to GitHub
+node_modules/
+
+# Do not upload .env file (it may have secret keys later)
+.env
