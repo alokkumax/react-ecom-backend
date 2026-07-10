@@ -1,16 +1,18 @@
-// Load environment variables from .env file (like PORT number)
+// this file starts our server
+
+// load variables from .env file like PORT, MONGO_URI, JWT_SECRET
 require("dotenv").config();
 
-// Import our express app from app.js
+// import express app from app.js
 const app = require("./app");
 
-// Import database connection function
+// import function to connect mongodb
 const connectDB = require("./config/db");
 
-// Get port from .env file, or use 5000 if not set
+// get port number from .env, if not found use 5000
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB first, then start the server
+// first connect to database, then start the server
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

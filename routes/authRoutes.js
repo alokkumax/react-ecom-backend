@@ -1,14 +1,14 @@
-// Import express router to create auth routes
+// auth routes file - register and login
+
 const express = require("express");
 const router = express.Router();
 
-// Import register and login functions
 const { registerUser, loginUser } = require("../controllers/authController");
 
-// POST /register - register a new user
+// POST /register - create new account
 router.post("/register", registerUser);
 
-// POST /login - login user and get JWT token
+// POST /login - login and get token
 router.post("/login", loginUser);
 
 module.exports = router;

@@ -1,24 +1,25 @@
-// Import express router to create cart routes
+// cart routes file
+// all cart routes need login token (protected)
+
 const express = require("express");
 const router = express.Router();
 
-// Import cart controller functions
 const {
   addToCart,
   updateCartItem,
   removeFromCart,
 } = require("../controllers/cartController");
 
-// Import JWT middleware to protect cart routes
+// this checks token before allowing cart access
 const verifyToken = require("../middleware/authMiddleware");
 
-// POST /cart - add product to cart (protected - login required)
+// POST /cart - add to cart (login required)
 router.post("/", verifyToken, addToCart);
 
-// PUT /cart/:id - update cart item quantity (protected - login required)
+// PUT /cart/:id - update quantity (login required)
 router.put("/:id", verifyToken, updateCartItem);
 
-// DELETE /cart/:id - remove item from cart (protected - login required)
+// DELETE /cart/:id - remove from cart (login required)
 router.delete("/:id", verifyToken, removeFromCart);
 
 module.exports = router;

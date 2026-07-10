@@ -1,17 +1,17 @@
-// Import express router to create product routes
+// product routes file
+
 const express = require("express");
 const router = express.Router();
 
-// Import product controller functions
 const {
   getAllProducts,
   getProductById,
 } = require("../controllers/productController");
 
-// GET /products - fetch all products
+// GET /products - get all products
 router.get("/", getAllProducts);
 
-// GET /products/:id - fetch single product by id
+// GET /products/:id - get one product
 router.get("/:id", getProductById);
 
 module.exports = router;

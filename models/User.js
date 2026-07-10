@@ -1,28 +1,28 @@
-// Import mongoose to create a schema (structure) for our data
+// this file defines how a user looks in the database
+
 const mongoose = require("mongoose");
 
-// This defines what a User document will look like in MongoDB
+// schema = structure of data we want to save
 const userSchema = new mongoose.Schema({
-  // User's full name
+  // full name of user
   name: {
     type: String,
     required: true,
   },
 
-  // User's email address (used for login later)
+  // email for login
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // no two users can have same email
   },
 
-  // User's password (we will hash this later in auth step)
+  // password (we save hashed password, not plain text)
   password: {
     type: String,
     required: true,
   },
 });
 
-// Create and export the User model
-// "User" is the collection name in MongoDB (it becomes "users")
+// create User model - saves data in "users" collection in mongodb
 module.exports = mongoose.model("User", userSchema);

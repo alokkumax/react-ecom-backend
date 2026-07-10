@@ -1,31 +1,32 @@
-// Import jsonwebtoken to verify the token
+// this file checks if user is logged in before allowing cart access
+
 const jwt = require("jsonwebtoken");
 
-// Middleware to verify JWT token before accessing protected routes
+// middleware = function that runs before the actual route
 const verifyToken = (req, res, next) => {
   try {
-    // Get token from Authorization header
-    // Format should be: Bearer <token>
+    // get token from header sent by postman
+    // format: Bearer <token>
     const authHeader = req.headers.authorization;
 
-    // If no token is sent
+    // if user did not send token
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "Access denied. No token provided" });
     }
 
-    // Remove "Bearer " and get only the token
+    // remove "Bearer " word and get only token
     const token = authHeader.split(" ")[1];
 
-    // Verify token using JWT_SECRET from .env
+    // check if token is valid
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Save user id from token into request (can use later if needed)
+    // save user id from token (we can use later)
     req.userId = decoded.userId;
 
-    // Move to next function (cart controller)
+    // token is valid, go to next step (cart function)
     next();
   } catch (error) {
-    // If token is invalid or expired
+    // token is wrong or expired
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };

@@ -1,54 +1,52 @@
-// Import Cart and Product models
+// this file has all cart related logic - add, update, delete
+
 const Cart = require("../models/Cart");
 const Product = require("../models/Product");
-
-// Import mongoose to validate IDs
 const mongoose = require("mongoose");
 
-// POST /cart - Add a product to the cart
+// add product to cart - POST /cart
 const addToCart = async (req, res) => {
   try {
-    // Get data sent from client (Thunder Client / frontend)
+    // get data from postman request body
     const { userId, productId, quantity } = req.body;
 
-    // Validation: check if required fields are missing
+    // check if user sent all required fields
     if (!userId || !productId || !quantity) {
       return res.status(400).json({
         message: "Please provide userId, productId and quantity",
       });
     }
 
-    // Validation: quantity must be greater than 0
+    // quantity should be at least 1
     if (quantity <= 0) {
       return res.status(400).json({
         message: "Quantity must be greater than 0",
       });
     }
 
-    // Validation: check if userId is a valid MongoDB id
+    // check if userId is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    // Validation: check if productId is a valid MongoDB id
+    // check if productId is valid
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ message: "Invalid product ID" });
     }
 
-    // Validation: check if product exists in database before adding to cart
+    // check if product actually exists in database
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Create new cart item in MongoDB
+    // save new item in cart collection
     const cartItem = await Cart.create({
       userId,
       productId,
       quantity,
     });
 
-    // Send success response with status 201 (Created)
     res.status(201).json({
       message: "Product added to cart",
       cartItem,
@@ -61,37 +59,37 @@ const addToCart = async (req, res) => {
   }
 };
 
-// PUT /cart/:id - Update quantity of a cart item
+// update cart quantity - PUT /cart/:id
 const updateCartItem = async (req, res) => {
   try {
     const { id } = req.params;
     const { quantity } = req.body;
 
-    // Validation: check if cart item id is valid
+    // check if cart id is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid cart item ID" });
     }
 
-    // Validation: quantity field is required
+    // quantity is required
     if (!quantity) {
       return res.status(400).json({ message: "Please provide quantity" });
     }
 
-    // Validation: quantity must be greater than 0
+    // quantity should be greater than 0
     if (quantity <= 0) {
       return res.status(400).json({
         message: "Quantity must be greater than 0",
       });
     }
 
-    // Update cart item and return the updated document
+    // update the cart item in database
     const cartItem = await Cart.findByIdAndUpdate(
       id,
       { quantity },
-      { new: true }
+      { new: true } // return updated data
     );
 
-    // If cart item not found
+    // if no cart item found with this id
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }
@@ -108,20 +106,20 @@ const updateCartItem = async (req, res) => {
   }
 };
 
-// DELETE /cart/:id - Remove a product from cart
+// remove item from cart - DELETE /cart/:id
 const removeFromCart = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validation: check if cart item id is valid
+    // check if cart id is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid cart item ID" });
     }
 
-    // Delete cart item from database
+    // delete from database
     const cartItem = await Cart.findByIdAndDelete(id);
 
-    // If cart item not found
+    // if item not found
     if (!cartItem) {
       return res.status(404).json({ message: "Cart item not found" });
     }

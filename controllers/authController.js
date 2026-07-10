@@ -1,26 +1,22 @@
-// Import User model to save and find users in MongoDB
+// this file has register and login logic
+
 const User = require("../models/User");
+const bcrypt = require("bcryptjs"); // used to hash password
+const jwt = require("jsonwebtoken"); // used to create login token
 
-// Import bcryptjs to hash and compare passwords
-const bcrypt = require("bcryptjs");
-
-// Import jsonwebtoken to create login token
-const jwt = require("jsonwebtoken");
-
-// POST /register - Register a new user
+// register new user - POST /register
 const registerUser = async (req, res) => {
   try {
-    // Get name, email and password from request body
     const { name, email, password } = req.body;
 
-    // Validation: check if any field is missing
+    // check if all fields are filled
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Please provide name, email and password",
       });
     }
 
-    // Check if user with same email already exists
+    // check if email is already registered
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -28,17 +24,17 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash the password before saving (never save plain password)
+    // hash password before saving (we never save plain password)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user in database
+    // save user in database
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    // Send success response (do not send password back)
+    // send success message (don't send password back)
     res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -55,43 +51,41 @@ const registerUser = async (req, res) => {
   }
 };
 
-// POST /login - Login user and return JWT token
+// login user - POST /login
 const loginUser = async (req, res) => {
   try {
-    // Get email and password from request body
     const { email, password } = req.body;
 
-    // Validation: check if email or password is missing
+    // check if email and password are sent
     if (!email || !password) {
       return res.status(400).json({
         message: "Please provide email and password",
       });
     }
 
-    // Find user by email
+    // find user by email
     const user = await User.findOne({ email });
 
-    // If user not found
+    // if no user found
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Compare entered password with hashed password in database
+    // check if password is correct
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    // If password is wrong
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Create JWT token with user id inside it
+    // create jwt token (this proves user is logged in)
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" } // token valid for 7 days
+      { expiresIn: "7d" } // token works for 7 days
     );
 
-    // Send token to client
+    // send token back to user
     res.status(200).json({
       message: "Login successful",
       token,

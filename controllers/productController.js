@@ -1,19 +1,18 @@
-// Import Product model to fetch data from MongoDB
-const Product = require("../models/Product");
+// this file has all product related logic
 
-// Import mongoose to check if ID is valid
+const Product = require("../models/Product");
 const mongoose = require("mongoose");
 
-// GET /products - Get all products from database
+// get all products - GET /products
 const getAllProducts = async (req, res) => {
   try {
-    // Find all products in the products collection
+    // get all products from database
     const products = await Product.find();
 
-    // Send products as JSON response with status 200 (OK)
+    // send back to user
     res.status(200).json(products);
   } catch (error) {
-    // If something goes wrong on the server, send status 500
+    // something went wrong
     res.status(500).json({
       message: "Server error",
       error: error.message,
@@ -21,29 +20,28 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-// GET /products/:id - Get one product by its ID
+// get one product by id - GET /products/:id
 const getProductById = async (req, res) => {
   try {
-    // Get product id from URL (example: /products/64abc123...)
+    // get id from url
     const { id } = req.params;
 
-    // Check if the id format is valid MongoDB ObjectId
+    // check if id is valid or not
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid product ID" });
     }
 
-    // Find product using the id
+    // find product in database
     const product = await Product.findById(id);
 
-    // If no product found with this id
+    // if product does not exist
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Send the product with status 200 (OK)
+    // send product back
     res.status(200).json(product);
   } catch (error) {
-    // Server side error
     res.status(500).json({
       message: "Server error",
       error: error.message,

@@ -1,23 +1,23 @@
-// Import mongoose to create a schema for cart items
+// this file defines how a cart item looks in the database
+
 const mongoose = require("mongoose");
 
-// This defines what a Cart item will look like in MongoDB
 const cartSchema = new mongoose.Schema({
-  // ID of the user who added this item to cart
+  // which user added this item
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
 
-  // ID of the product added to cart
+  // which product was added
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
 
-  // How many of this product the user wants
+  // how many quantity user wants
   quantity: {
     type: Number,
     required: true,
@@ -25,6 +25,5 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
-// Create and export the Cart model
-// Collection name in MongoDB will be "carts"
+// saves data in "carts" collection in mongodb
 module.exports = mongoose.model("Cart", cartSchema);
