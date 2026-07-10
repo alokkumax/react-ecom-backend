@@ -13,6 +13,16 @@ app.use(cors());
 // This helps express read JSON data sent in requests (we will use this later)
 app.use(express.json());
 
+// Import product and cart routes
+const productRoutes = require("./routes/productRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+
+// Use routes - all product APIs will start with /products
+app.use("/products", productRoutes);
+
+// All cart APIs will start with /cart
+app.use("/cart", cartRoutes);
+
 // Root route - when someone visits http://localhost:PORT/
 // they will see this message
 app.get("/", (req, res) => {
