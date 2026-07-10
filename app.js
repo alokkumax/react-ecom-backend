@@ -16,12 +16,16 @@ app.use(express.json());
 // Import product and cart routes
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 // Use routes - all product APIs will start with /products
 app.use("/products", productRoutes);
 
 // All cart APIs will start with /cart
 app.use("/cart", cartRoutes);
+
+// Auth routes - register and login
+app.use("/", authRoutes);
 
 // Root route - when someone visits http://localhost:PORT/
 // they will see this message

@@ -9,13 +9,16 @@ const {
   removeFromCart,
 } = require("../controllers/cartController");
 
-// POST /cart - add product to cart
-router.post("/", addToCart);
+// Import JWT middleware to protect cart routes
+const verifyToken = require("../middleware/authMiddleware");
 
-// PUT /cart/:id - update cart item quantity
-router.put("/:id", updateCartItem);
+// POST /cart - add product to cart (protected - login required)
+router.post("/", verifyToken, addToCart);
 
-// DELETE /cart/:id - remove item from cart
-router.delete("/:id", removeFromCart);
+// PUT /cart/:id - update cart item quantity (protected - login required)
+router.put("/:id", verifyToken, updateCartItem);
+
+// DELETE /cart/:id - remove item from cart (protected - login required)
+router.delete("/:id", verifyToken, removeFromCart);
 
 module.exports = router;
